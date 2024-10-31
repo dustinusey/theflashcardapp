@@ -1,16 +1,12 @@
-import Navbar from "./components/Navbar";
-import ThemeProvider from "./components/ThemeProvider";
+import Header from "@/components/Header";
 import "./globals.css";
-
-export const dynamic = "force-dynamic";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-white dark:bg-gray-900">
-        <ThemeProvider />
-        <Navbar />
-        <main>{children}</main>
+      <body className="bg-zinc-50 dark:bg-zinc-900">
+        <Header />
+        <main className="max-w-screen-2xl mx-auto">{children}</main>
       </body>
     </html>
   );

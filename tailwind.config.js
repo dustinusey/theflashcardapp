@@ -10,4 +10,12 @@ module.exports = {
     extend: {},
   },
   plugins: [],
+  safelist: [
+    "bg-emerald-500/10",
+    "text-emerald-500",
+    "bg-orange-500/10",
+    "text-orange-500",
+    "bg-rose-500/10",
+    "text-rose-500",
+  ],
 };
