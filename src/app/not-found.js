@@ -5,7 +5,7 @@ import Dots from "./components/Dots";
 
 export default function NotFound() {
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-200 via-zinc-50 to-zinc-300 dark:from-zinc-900 dark:via-zinc-900 dark:to-cyan-900/20">
+    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-50 via-white to-zinc-50 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900">
       <Dots />
 
       <div className="max-w-md w-full px-4 relative z-10">

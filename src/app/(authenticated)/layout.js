@@ -33,7 +33,7 @@ export default function AuthenticatedLayout({ children }) {
   if (!user) return children;
 
   return (
-    <div className="flex min-h-screen bg-zinc-100 dark:bg-zinc-900">
+    <div className="min-h-screen bg-white dark:bg-zinc-950">
       {/* Side Navigation */}
       <div className="w-20 fixed h-screen  bg-zinc-100 dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800/50 z-30 backdrop-blur-xl">
         <div className="flex flex-col h-full py-3">

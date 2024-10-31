@@ -5,14 +5,18 @@ export default function Dots() {
   const [dots, setDots] = useState([]);
 
   useEffect(() => {
-    // Create 50 dots with random positions and animations
     const newDots = Array.from({ length: 50 }, (_, i) => ({
       id: i,
       left: `${Math.random() * 100}%`,
       top: `${Math.random() * 100}%`,
       animationDuration: `${Math.random() * 20 + 10}s`,
-      size: Math.random() * 4 + 2,
-      opacity: Math.random() * 0.3 + 0.1,
+      size: Math.random() * 6 + 3,
+      opacity: Math.random() * 0.4 + 0.2,
+      colorClass: [
+        "text-zinc-300 dark:text-cyan-400",
+        "text-zinc-400 dark:text-zinc-100/30",
+        "text-zinc-500 dark:text-zinc-600",
+      ][Math.floor(Math.random() * 3)],
     }));
     setDots(newDots);
   }, []);
@@ -22,7 +26,7 @@ export default function Dots() {
       {dots.map((dot) => (
         <div
           key={dot.id}
-          className="absolute rounded-full animate-float"
+          className={`absolute rounded-full animate-float ${dot.colorClass}`}
           style={{
             left: dot.left,
             top: dot.top,
@@ -31,7 +35,6 @@ export default function Dots() {
             opacity: dot.opacity,
             animationDuration: dot.animationDuration,
             backgroundColor: "currentColor",
-            color: "rgb(34 211 238)",
           }}
         />
       ))}
