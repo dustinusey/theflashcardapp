@@ -1,12 +1,23 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export default function ThemeProvider() {
+export default function ThemeProvider({ children }) {
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
-    // Check localStorage and system preference
-    const theme = localStorage.getItem("theme") || "light";
-    document.documentElement.setAttribute("data-theme", theme);
+    setMounted(true);
+    // Check local storage or system preference for initial theme
+    const darkMode =
+      localStorage.getItem("darkMode") === "true" ||
+      (!("darkMode" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    document.documentElement.classList.toggle("dark", darkMode);
   }, []);
 
-  return null;
+  if (!mounted) {
+    return null;
+  }
+
+  return <>{children}</>;
 }

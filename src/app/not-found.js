@@ -1,49 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { FiArrowLeft } from "react-icons/fi";
-
-function Dots() {
-  const [dots, setDots] = useState([]);
-
-  useEffect(() => {
-    // Create 50 dots with random positions and animations
-    const newDots = Array.from({ length: 50 }, (_, i) => ({
-      id: i,
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-      animationDuration: `${Math.random() * 20 + 10}s`,
-      size: Math.random() * 4 + 2,
-      opacity: Math.random() * 0.5 + 0.1,
-    }));
-    setDots(newDots);
-  }, []);
-
-  return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none">
-      {dots.map((dot) => (
-        <div
-          key={dot.id}
-          className="absolute rounded-full animate-float"
-          style={{
-            left: dot.left,
-            top: dot.top,
-            width: `${dot.size}px`,
-            height: `${dot.size}px`,
-            opacity: dot.opacity,
-            animationDuration: dot.animationDuration,
-            backgroundColor: "currentColor",
-            color: "rgb(161 161 170)",
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+import Dots from "./components/Dots";
 
 export default function NotFound() {
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-white dark:bg-zinc-900">
+    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-200 via-zinc-50 to-zinc-300 dark:from-zinc-900 dark:via-zinc-900 dark:to-cyan-900/20">
       <Dots />
 
       <div className="max-w-md w-full px-4 relative z-10">

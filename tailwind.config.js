@@ -7,15 +7,30 @@ module.exports = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        "slide-in": {
+          "0%": { transform: "translateY(20px)" },
+          "100%": { transform: "translateY(0)" },
+        },
+      },
+      animation: {
+        "fade-in": "fade-in 200ms ease-out",
+        "slide-in": "slide-in 200ms ease-out",
+      },
+    },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
   safelist: [
     "bg-emerald-500/10",
     "text-emerald-500",
-    "bg-orange-500/10",
-    "text-orange-500",
-    "bg-rose-500/10",
-    "text-rose-500",
+    "bg-cyan-500/10",
+    "text-cyan-500",
+    "bg-cyan-500/10",
+    "text-cyan-500",
   ],
 };

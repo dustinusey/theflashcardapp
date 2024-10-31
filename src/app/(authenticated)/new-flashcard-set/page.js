@@ -16,12 +16,12 @@ const DIFFICULTY_CONFIG = {
     description: "Basic concepts and fundamentals",
   },
   intermediate: {
-    color: "orange",
+    color: "cyan",
     icon: FiAward,
     description: "Advanced topics and patterns",
   },
   hard: {
-    color: "rose",
+    color: "cyan",
     icon: FiZap,
     description: "Expert-level challenges",
   },
@@ -175,8 +175,8 @@ export default function NewFlashcards() {
               const activeColorClasses = {
                 emerald:
                   "bg-emerald-500/10 text-emerald-500 border-emerald-500",
-                orange: "bg-orange-500/10 text-orange-500 border-orange-500",
-                rose: "bg-rose-500/10 text-rose-500 border-rose-500",
+                cyan: "bg-cyan-500/10 text-cyan-500 border-cyan-500",
+                cyan: "bg-cyan-500/10 text-cyan-500 border-cyan-500",
               };
 
               return (

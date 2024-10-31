@@ -24,6 +24,8 @@ export default function Header() {
 
   useEffect(() => {
     setMounted(true);
+
+    // Get initial user
     const getUser = async () => {
       const {
         data: { user },
@@ -31,11 +33,28 @@ export default function Header() {
       setUser(user);
     };
     getUser();
+
+    // Subscribe to auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, [supabase.auth]);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      setIsDropdownOpen(false);
+      router.push("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   };
 
   const UserAvatar = () => {
@@ -54,7 +73,7 @@ export default function Header() {
     }
 
     return (
-      <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-sm font-medium">
+      <div className="w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center text-white text-sm font-medium">
         {user.email?.[0].toUpperCase() || "U"}
       </div>
     );
@@ -73,7 +92,7 @@ export default function Header() {
             <div className="w-[78px] px-3">
               <Link
                 href="/dashboard"
-                className="flex items-center justify-center p-3.5 rounded-2xl text-white bg-indigo-500 hover:bg-indigo-600 transition-colors"
+                className="flex items-center justify-center p-3.5 rounded-2xl text-white bg-cyan-500 hover:bg-cyan-600 transition-colors"
               >
                 <FiZap className="h-5 w-5" />
               </Link>
@@ -87,13 +106,6 @@ export default function Header() {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2 px-4">
-            <button className="p-2 text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800">
-              <FiBookmark className="h-5 w-5" />
-            </button>
-            <button className="p-2 text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800">
-              <FiAward className="h-5 w-5" />
-            </button>
-
             {/* User Dropdown */}
             {user && (
               <div className="relative ml-2">

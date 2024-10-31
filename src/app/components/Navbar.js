@@ -102,7 +102,7 @@ export default function Navbar() {
                           handleLogout();
                           setIsDropdownOpen(false);
                         }}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-rose-600 dark:text-rose-400 hover:bg-zinc-50 dark:hover:bg-zinc-700 rounded-xl transition-colors"
+                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-cyan-600 dark:text-cyan-400 hover:bg-zinc-50 dark:hover:bg-zinc-700 rounded-xl transition-colors"
                       >
                         <FiLogOut className="h-4 w-4" />
                         Log out
