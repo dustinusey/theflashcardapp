@@ -69,17 +69,46 @@ export default function LoginForm() {
   const showLoading = isLoading || isAuthenticating;
 
   return (
-    <div className="relative min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-zinc-50 via-white to-zinc-50 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900">
+    <div className="relative min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-br from-zinc-50 via-white to-zinc-50 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900">
       <Dots />
+
+      {/* Hero Section */}
+      <div className="text-center mb-12 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <h1 className="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-4">
+          The Flashcard App
+        </h1>
+        <p className="text-xl text-zinc-600 dark:text-zinc-300 max-w-2xl mx-auto">
+          Master any subject with AI-powered flashcards and spaced repetition
+        </p>
+      </div>
+
+      {/* Feature Pills */}
+      <div className="flex flex-wrap justify-center gap-3 mb-12 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+        {[
+          { icon: FiZap, text: "AI-Powered Learning" },
+          { icon: FiTrendingUp, text: "Track Progress" },
+          { icon: FiShare2, text: "Share & Collaborate" },
+        ].map((feature) => (
+          <div
+            key={feature.text}
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/50"
+          >
+            <feature.icon className="h-4 w-4 text-cyan-500" />
+            <span className="text-sm text-zinc-700 dark:text-zinc-300">
+              {feature.text}
+            </span>
+          </div>
+        ))}
+      </div>
 
       <div className="w-full max-w-sm relative z-10">
         <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700/50 p-8 animate-in fade-in slide-in-from-bottom-8 duration-500 fill-mode-forwards">
           <div className="text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
             <h2 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">
-              Welcome back
+              Get Started
             </h2>
             <p className="text-zinc-500 dark:text-zinc-400">
-              Sign in to continue to your dashboard
+              Join thousands of students improving their learning
             </p>
           </div>
 
@@ -110,10 +139,17 @@ export default function LoginForm() {
               className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all hover:scale-[1.02] active:scale-[0.98] text-sm text-zinc-600 dark:text-zinc-400"
             >
               <FiInfo className="h-4 w-4" />
-              <span>About The Flashcard App</span>
+              <span>Learn More</span>
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Social Proof */}
+      <div className="mt-12 text-center relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          Trusted by students and professionals
+        </p>
       </div>
 
       {/* Info Modal */}

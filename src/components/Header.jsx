@@ -79,12 +79,12 @@ export default function Header() {
     );
   };
 
-  if (!mounted) {
+  if (!mounted || !user) {
     return null;
   }
 
   return (
-    <div className="sticky top-0 z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800">
+    <div className="fixed w-full top-0 z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800">
       <div className="max-w-screen-2xl mx-auto">
         <div className="flex items-center justify-between h-16">
           {/* App Logo and Title */}

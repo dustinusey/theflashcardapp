@@ -13,8 +13,8 @@ import {
   FiZap,
 } from "react-icons/fi";
 
-// Development toggle for dummy data
-const SHOW_DUMMY_DATA = false; // Set to false for production
+// development toggle for dummy data
+const SHOW_DUMMY_DATA = false;
 
 // FAQ Component
 function FAQ({ question, answer }) {
@@ -106,7 +106,7 @@ export default function HighscoresPage() {
   console.log("Total users:", users.length);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
+    <div className="max-w-3xl mx-auto px-4 py-12  pt-28 min-h-screen">
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-3">

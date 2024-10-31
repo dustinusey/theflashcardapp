@@ -35,7 +35,7 @@ export default function AuthenticatedLayout({ children }) {
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950">
       {/* Side Navigation */}
-      <div className="w-20 fixed h-screen  bg-zinc-100 dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800/50 z-30 backdrop-blur-xl">
+      <div className="pt-20 w-20 fixed h-screen  bg-zinc-100 dark:bg-zinc-100/10 border-r border-zinc-200 dark:border-zinc-800/50 z-30 backdrop-blur-xl">
         <div className="flex flex-col h-full py-3">
           {/* Main Navigation */}
           <nav className="space-y-1.5">
@@ -45,7 +45,7 @@ export default function AuthenticatedLayout({ children }) {
                 href="/dashboard"
                 className={`flex items-center justify-center p-2.5 rounded-2xl   w-full transition-colors ${
                   pathname === "/dashboard"
-                    ? "text-zinc-900 dark:text-zinc-100  dark:bg-zinc-800/50 hover:bg-zic-400 bg-zinc-200"
+                    ? "text-zinc-900 dark:text-zinc-100  dark:bg-cyan-800/30 hover:bg-zic-400 bg-zinc-200"
                     : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-200 hover:bg-zic-400 hover:bg-zinc-200"
                 }`}
                 title="Dashboard"
@@ -60,7 +60,7 @@ export default function AuthenticatedLayout({ children }) {
                 href="/new-flashcard-set"
                 className={`flex items-center justify-center p-2.5 rounded-2xl   w-full transition-colors ${
                   pathname === "/new-flashcard-set"
-                    ? "text-zinc-900 dark:text-zinc-100  dark:bg-zinc-800/50 hover:bg-zic-400 bg-zinc-200"
+                    ? "text-zinc-900 dark:text-zinc-100  dark:bg-cyan-800/30 hover:bg-zic-400 bg-zinc-200"
                     : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-200 hover:bg-zic-400 hover:bg-zinc-200"
                 }`}
                 title="Create Flashcard Set"
@@ -75,7 +75,7 @@ export default function AuthenticatedLayout({ children }) {
                 href="/highscores"
                 className={`flex items-center justify-center p-2.5 rounded-2xl   w-full transition-colors ${
                   pathname === "/highscores"
-                    ? "text-zinc-900 dark:text-zinc-100  dark:bg-zinc-800/50 hover:bg-zic-400 bg-zinc-200"
+                    ? "text-zinc-900 dark:text-zinc-100  dark:bg-cyan-800/30 hover:bg-zic-400 bg-zinc-200"
                     : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-200 hover:bg-zic-400 hover:bg-zinc-200"
                 }`}
                 title="Highscores"
@@ -90,7 +90,7 @@ export default function AuthenticatedLayout({ children }) {
                 href="/upgrade"
                 className={`flex items-center justify-center p-2.5 rounded-2xl   w-full transition-colors ${
                   pathname === "/upgrade"
-                    ? "text-zinc-900 dark:text-zinc-100  dark:bg-zinc-800/50 hover:bg-zic-400 bg-zinc-200"
+                    ? "text-zinc-900 dark:text-zinc-100  dark:bg-cyan-800/30 hover:bg-zic-400 bg-zinc-200"
                     : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-200 hover:bg-zic-400 hover:bg-zinc-200"
                 }`}
                 title="Upgrade"
@@ -101,13 +101,13 @@ export default function AuthenticatedLayout({ children }) {
           </nav>
 
           {/* Bottom Section - Profile & Settings */}
-          <div className="mt-auto px-3 space-y-1.5 mb-3">
+          <div className="mt-auto px-3 space-y-1.5 mb-2">
             {/* Settings */}
             <Link
               href="/settings"
               className={`flex items-center justify-center p-2.5 rounded-2xl   w-full transition-colors ${
                 pathname === "/settings"
-                  ? "text-zinc-900 dark:text-zinc-100  dark:bg-zinc-800/50 hover:bg-zic-400 bg-zinc-200"
+                  ? "text-zinc-900 dark:text-zinc-100  dark:bg-cyan-800/30 hover:bg-zic-400 bg-zinc-200"
                   : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-200 hover:bg-zic-400 hover:bg-zinc-200"
               }`}
               title="Settings"
@@ -120,7 +120,7 @@ export default function AuthenticatedLayout({ children }) {
               href="/profile"
               className={`flex items-center justify-center p-2.5 rounded-2xl   w-full transition-colors ${
                 pathname === "/profile"
-                  ? "text-zinc-900 dark:text-zinc-100  dark:bg-zinc-800/50 hover:bg-zic-400 bg-zinc-200"
+                  ? "text-zinc-900 dark:text-zinc-100  dark:bg-cyan-800/30 hover:bg-zic-400 bg-zinc-200"
                   : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-200 hover:bg-zic-400 hover:bg-zinc-200"
               }`}
               title="Profile"

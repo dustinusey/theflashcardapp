@@ -162,7 +162,7 @@ export default function Dashboard() {
   if (!mounted) return null;
 
   return (
-    <div className="bg-gradient-to-b from-zinc-100 to-white dark:from-zinc-800 dark:to-zinc-900 w-full pb-24">
+    <div className="pt-12 bg-gradient-to-b from-zinc-100 to-white dark:from-zinc-800 dark:to-zinc-900 w-full pb-24">
       <div className="max-w-3xl mx-auto px-4 py-12">
         <div className="space-y-8">
           {/* User Profile & Welcome */}

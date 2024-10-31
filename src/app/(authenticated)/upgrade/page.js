@@ -11,7 +11,7 @@ import {
 
 export default function UpgradePage() {
   return (
-    <div className="max-w-screen-xl mx-auto px-4 py-12">
+    <div className="max-w-screen-xl mx-auto px-4 py-12 pt-28 min-h-screen">
       {/* Hero Section */}
       <div className="text-center max-w-2xl mx-auto mb-16">
         <span className="px-4 py-1.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-sm font-medium inline-block mb-4">
