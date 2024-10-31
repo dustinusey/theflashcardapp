@@ -3,7 +3,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   FiAward,
   FiBookmark,
@@ -21,6 +21,7 @@ export default function Header() {
   const [mounted, setMounted] = useState(false);
   const supabase = createClientComponentClient();
   const router = useRouter();
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     setMounted(true);
@@ -45,6 +46,17 @@ export default function Header() {
       subscription?.unsubscribe();
     };
   }, [supabase.auth]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -108,7 +120,7 @@ export default function Header() {
           <div className="flex items-center gap-2 px-4">
             {/* User Dropdown */}
             {user && (
-              <div className="relative ml-2">
+              <div ref={dropdownRef} className="relative ml-2">
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center gap-2 p-1.5 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
@@ -118,7 +130,10 @@ export default function Header() {
                 </button>
 
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-lg overflow-hidden">
+                  <div
+                    ref={dropdownRef}
+                    className="absolute right-0 mt-2 w-48 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-lg overflow-hidden"
+                  >
                     <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-700">
                       <div className="flex items-center gap-3">
                         <UserAvatar />
@@ -137,6 +152,7 @@ export default function Header() {
                     <div className="p-2">
                       <Link
                         href="/profile"
+                        onClick={() => setIsDropdownOpen(false)}
                         className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
                       >
                         <FiUser className="h-4 w-4" />
@@ -144,6 +160,7 @@ export default function Header() {
                       </Link>
                       <Link
                         href="/settings"
+                        onClick={() => setIsDropdownOpen(false)}
                         className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
                       >
                         <FiSettings className="h-4 w-4" />

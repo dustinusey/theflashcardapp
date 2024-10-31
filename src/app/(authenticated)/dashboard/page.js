@@ -31,6 +31,8 @@ export default function Dashboard() {
   const [currentMasteredPage, setCurrentMasteredPage] = useState(1);
   const decksPerPage = 5;
   const supabase = createClientComponentClient();
+  const [isVisible, setIsVisible] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -149,6 +151,15 @@ export default function Dashboard() {
     ]);
   }, []);
 
+  useEffect(() => {
+    setMounted(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setIsVisible(true);
+      });
+    });
+  }, []);
+
   const paginateDecks = (decks, currentPage) => {
     const startIndex = (currentPage - 1) * decksPerPage;
     const endIndex = startIndex + decksPerPage;
@@ -166,106 +177,139 @@ export default function Dashboard() {
       <div className="max-w-3xl mx-auto px-4 py-12">
         <div className="space-y-8">
           {/* User Profile & Welcome */}
-          <div className="flex items-center gap-6">
-            <div className=" w-24 h-24 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden flex-shrink-0">
-              {user?.user_metadata?.avatar_url ? (
-                <Image
-                  src={user.user_metadata.avatar_url}
-                  alt="Profile"
-                  width={80}
-                  height={80}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-2xl text-zinc-500 dark:text-zinc-400">
-                  {user?.user_metadata?.name?.[0] || "D"}
-                </div>
-              )}
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100">
-                Welcome back, Developer
-              </h1>
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                  {user?.user_metadata?.name || "Anonymous Developer"}
-                </p>
-                {user?.email && (
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    {user.email}
-                  </p>
+          <div
+            className={`transition-fade ${
+              isVisible ? "show [transition-delay:200ms]" : ""
+            }`}
+          >
+            <div className="flex items-center gap-6">
+              <div className="w-24 h-24 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden flex-shrink-0">
+                {user?.user_metadata?.avatar_url ? (
+                  <div
+                    className={`transition-fade ${
+                      isVisible ? "show [transition-delay:300ms]" : ""
+                    }`}
+                  >
+                    <Image
+                      src={user.user_metadata.avatar_url}
+                      alt="Profile"
+                      width={80}
+                      height={80}
+                      className={`w-full h-full object-cover transition-all duration-300 ${
+                        imageLoaded
+                          ? "scale-100 opacity-100"
+                          : "scale-95 opacity-0"
+                      }`}
+                      onLoadingComplete={() => setImageLoaded(true)}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-2xl text-zinc-500 dark:text-zinc-400">
+                    {user?.user_metadata?.name?.[0] || "D"}
+                  </div>
                 )}
+              </div>
+              <div className="space-y-2">
+                <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100">
+                  Welcome back, Developer
+                </h1>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                    {user?.user_metadata?.name || "Anonymous Developer"}
+                  </p>
+                  {user?.email && (
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                      {user.email}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Key Stats */}
-          <div className="grid grid-cols-3 gap-4">
-            {[
-              {
-                label: "Daily Streak",
-                value: "5 days",
-                icon: FiZap,
-                detail: "Rank #12 in streaks",
-              },
-              {
-                label: "Total Points",
-                value: "1,420",
-                icon: FiAward,
-                detail: "Top 10%",
-              },
-              {
-                label: "Cards Mastered",
-                value: "142/200",
-                icon: FiBook,
-                detail: "Rank #234 overall",
-              },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="p-4 rounded-xl border backdrop-blur-sm bg-cyan-500/10 border-cyan-500/20 text-cyan-600 dark:text-cyan-500"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-white/80 dark:bg-white/10">
-                    <stat.icon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-lg font-medium">{stat.value}</p>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-300">
-                      {stat.label}
-                    </p>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                      {stat.detail}
-                    </p>
+          <div
+            className={`transition-fade ${
+              isVisible ? "show [transition-delay:400ms]" : ""
+            }`}
+          >
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                {
+                  label: "Daily Streak",
+                  value: "5 days",
+                  icon: FiZap,
+                  detail: "Rank #12 in streaks",
+                },
+                {
+                  label: "Total Points",
+                  value: "1,420",
+                  icon: FiAward,
+                  detail: "Top 10%",
+                },
+                {
+                  label: "Cards Mastered",
+                  value: "142/200",
+                  icon: FiBook,
+                  detail: "Rank #234 overall",
+                },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="p-4 rounded-xl border backdrop-blur-sm bg-cyan-500/10 border-cyan-500/20 text-cyan-600 dark:text-cyan-500"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-xl bg-white/80 dark:bg-white/10">
+                      <stat.icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-lg font-medium">{stat.value}</p>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-300">
+                        {stat.label}
+                      </p>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                        {stat.detail}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="flex gap-3">
-            <Link
-              href="/study"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl transition-colors"
-            >
-              <FiPlay className="h-4 w-4" />
-              Continue Learning
-            </Link>
-            <Link
-              href="/create"
-              className="inline-flex items-center gap-2 px-4 py-2 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
-            >
-              <FiPlus className="h-4 w-4" />
-              Create New Deck
-            </Link>
+          <div
+            className={`transition-fade ${
+              isVisible ? "show [transition-delay:600ms]" : ""
+            }`}
+          >
+            <div className="flex gap-3">
+              <Link
+                href="/study"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl transition-colors"
+              >
+                <FiPlay className="h-4 w-4" />
+                Continue Learning
+              </Link>
+              <Link
+                href="/create"
+                className="inline-flex items-center gap-2 px-4 py-2 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+              >
+                <FiPlus className="h-4 w-4" />
+                Create New Deck
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-3xl mx-auto px-4 space-y-8 mb-24">
         {/* Incomplete Decks */}
-        <div>
+        <div
+          className={`transition-fade ${
+            isVisible ? "show [transition-delay:800ms]" : ""
+          }`}
+        >
           <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-4">
             Continue Learning
           </h2>
@@ -405,7 +449,11 @@ export default function Dashboard() {
         </div>
 
         {/* Mastered Decks */}
-        <div>
+        <div
+          className={`transition-fade ${
+            isVisible ? "show [transition-delay:1000ms]" : ""
+          }`}
+        >
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">

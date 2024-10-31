@@ -84,3 +84,39 @@ body {
 .animate-float {
   animation: float linear infinite;
 }
+
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: slideUpFade 0.5s ease-out forwards;
+}
+
+.transition-fade {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.transition-fade.show {
+  opacity: 1;
+  transform: translateY(0);
+} 
+
+/* Add to your existing CSS */
+.scale-95 {
+  transform: scale(0.95);
+}
+
+.scale-100 {
+  transform: scale(1);
+} 

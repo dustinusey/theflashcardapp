@@ -1,13 +1,47 @@
 "use client";
+import { useState } from "react";
 import {
   FiAward,
   FiCheck,
+  FiChevronDown,
   FiClock,
   FiShield,
   FiStar,
   FiTrendingUp,
   FiZap,
 } from "react-icons/fi";
+
+function FAQ({ question, answer }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border border-zinc-200 dark:border-zinc-700/50 rounded-2xl overflow-hidden">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-6 py-4 flex items-center justify-between bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
+      >
+        <span className="font-medium text-left text-zinc-900 dark:text-white">
+          {question}
+        </span>
+        <FiChevronDown
+          className={`h-5 w-5 text-zinc-500 transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      <div
+        className={`overflow-hidden transition-all duration-200 ease-in-out ${
+          isOpen ? "max-h-96" : "max-h-0"
+        }`}
+      >
+        <div className="px-6 py-4 bg-zinc-50 dark:bg-zinc-800/50 text-zinc-600 dark:text-zinc-300 text-sm">
+          {answer}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function UpgradePage() {
   return (
@@ -186,7 +220,7 @@ export default function UpgradePage() {
       </div>
 
       {/* FAQ Section */}
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white mb-6 text-center">
           Frequently Asked Questions
         </h2>
@@ -208,18 +242,8 @@ export default function UpgradePage() {
               q: "What happens to my decks if I downgrade?",
               a: "Your decks and data are safely stored. You'll maintain access to your first 5 decks, but won't be able to create new ones until upgrading again.",
             },
-          ].map((faq) => (
-            <div
-              key={faq.q}
-              className="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/50 dark:border-zinc-700/50"
-            >
-              <h3 className="font-medium text-zinc-900 dark:text-white mb-2">
-                {faq.q}
-              </h3>
-              <p className="text-zinc-600 dark:text-zinc-300 text-sm">
-                {faq.a}
-              </p>
-            </div>
+          ].map((faq, index) => (
+            <FAQ key={index} question={faq.q} answer={faq.a} />
           ))}
         </div>
       </div>

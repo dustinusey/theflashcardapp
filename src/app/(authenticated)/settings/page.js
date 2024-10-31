@@ -1,314 +1,512 @@
 "use client";
-import ThemeToggle from "@/components/theme-toggle";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useTheme } from "next-themes";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   FiAlertTriangle,
   FiCheck,
-  FiHome,
+  FiEdit2,
   FiMoon,
-  FiSettings,
+  FiStar,
   FiSun,
   FiTrash2,
   FiX,
+  FiZap,
 } from "react-icons/fi";
 
-// Add these plan constants
-const PLANS = {
-  FREE: {
-    name: "Free",
-    features: ["5 decks", "Basic statistics", "Standard support"],
-  },
-  PRO: {
-    name: "Pro",
-    features: [
-      "Unlimited decks",
-      "Advanced analytics",
-      "Priority support",
-      "Custom deck themes",
-      "AI-powered study insights",
-    ],
-    price: "$9/month",
-  },
-};
+function ConfirmationModal({ isOpen, onClose, onConfirm, title, message }) {
+  const [isAnimatingOut, setIsAnimatingOut] = useState(false);
+
+  // Reset animation state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setIsAnimatingOut(false);
+    }
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setIsAnimatingOut(true);
+    setTimeout(onClose, 150);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-150
+      ${isAnimatingOut ? "opacity-0" : "opacity-100"}`}
+    >
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"
+        onClick={handleClose}
+      />
+
+      {/* Modal */}
+      <div
+        className={`relative w-full max-w-lg bg-white dark:bg-zinc-950 rounded-2xl shadow-2xl border border-zinc-300 dark:border-zinc-800 transition-all duration-150
+          ${isAnimatingOut ? "opacity-0 scale-95" : "opacity-100 scale-100"}`}
+      >
+        <div className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800/50">
+          {/* Header */}
+          <div className="px-6 py-5">
+            <h3 className="text-xl font-semibold text-zinc-900 dark:text-white">
+              {title}
+            </h3>
+          </div>
+
+          {/* Content */}
+          <div className="px-6 py-8">
+            <p className="text-zinc-700 dark:text-zinc-200 text-base">
+              {message}
+            </p>
+          </div>
+
+          {/* Actions */}
+          <div className="px-6 py-4 bg-zinc-100 dark:bg-black/40 rounded-b-2xl flex gap-3 justify-end">
+            <button
+              onClick={handleClose}
+              className="px-4 py-2 text-sm font-medium rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-300 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                setIsAnimatingOut(true);
+                setTimeout(onConfirm, 200);
+              }}
+              className="px-4 py-2 text-sm font-medium rounded-lg bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DangerousConfirmationModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText,
+}) {
+  const [inputValue, setInputValue] = useState("");
+  const [isAnimatingOut, setIsAnimatingOut] = useState(false);
+
+  // Reset animation state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setIsAnimatingOut(false);
+      setInputValue(""); // Also reset input when modal opens
+    }
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setIsAnimatingOut(true);
+    setTimeout(onClose, 150);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className={`absolute inset-0 bg-black/60 dark:bg-white/20 backdrop-blur-[2px] transition-opacity duration-200
+          ${isAnimatingOut ? "animate-out fade-out" : "animate-in fade-in"}`}
+        onClick={handleClose}
+      />
+
+      {/* Modal */}
+      <div
+        className={`relative w-full max-w-lg bg-white dark:bg-zinc-950 rounded-2xl shadow-2xl border border-zinc-300 dark:border-zinc-800 transition-all duration-200 origin-center
+          ${
+            isAnimatingOut
+              ? "animate-out fade-out zoom-out-95 duration-200"
+              : "animate-in fade-in zoom-in-95 duration-300"
+          }`}
+      >
+        <div className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800/50">
+          {/* Header */}
+          <div className="px-6 py-5 flex items-center gap-3">
+            <div className="p-2 rounded-full bg-red-100 dark:bg-red-500/10">
+              <FiAlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-zinc-900 dark:text-white">
+              {title}
+            </h3>
+          </div>
+
+          {/* Content */}
+          <div className="px-6 py-8 space-y-6">
+            <p className="text-zinc-700 dark:text-zinc-200 text-base">
+              {message}
+            </p>
+
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                Type{" "}
+                <span className="font-mono text-red-600 dark:text-red-400 font-semibold">
+                  {confirmText}
+                </span>{" "}
+                to confirm
+              </label>
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                className="w-full px-3 py-2 text-base rounded-lg border-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-shadow"
+                placeholder={`Type ${confirmText} to confirm`}
+              />
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="px-6 py-4 bg-zinc-100 dark:bg-black/40 rounded-b-2xl flex gap-3 justify-end">
+            <button
+              onClick={handleClose}
+              className="px-4 py-2 text-sm font-medium rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-300 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                setIsAnimatingOut(true);
+                setTimeout(onConfirm, 200);
+              }}
+              disabled={inputValue !== confirmText}
+              className="px-4 py-2 text-sm font-medium rounded-lg bg-red-600 dark:bg-red-500 text-white hover:bg-red-700 dark:hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function SettingsPage() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const router = useRouter();
-  const supabase = createClientComponentClient();
-  const [showModal, setShowModal] = useState(false);
-  const [showMasterConfirm, setShowMasterConfirm] = useState(false);
-  const [resetType, setResetType] = useState(null);
-  const [currentPlan, setCurrentPlan] = useState("FREE"); // Replace with actual user plan
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [username, setUsername] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
-
-  useEffect(() => {
-    const checkUser = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (!session) {
-        router.replace("/");
-      }
-    };
-
-    checkUser();
-  }, [router, supabase.auth]);
+  const [originalUsername, setOriginalUsername] = useState("");
+  const supabase = createClientComponentClient();
+  const [activeSection, setActiveSection] = useState("appearance");
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    onConfirm: () => {},
+    type: "normal",
+    confirmText: "",
+  });
 
   useEffect(() => {
     setMounted(true);
-    const isDark = document.documentElement.classList.contains("dark");
-    setIsDarkMode(isDark);
-  }, []);
+    // Fetch user data
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        // First try to get username from user_metadata
+        // If not found, try to get it from the GitHub identity
+        const githubUsername = user.identities?.find(
+          (identity) => identity.provider === "github"
+        )?.identity_data?.preferred_username;
 
-  useEffect(() => {
-    async function getUser() {
-      try {
-        const {
-          data: { user },
-          error,
-        } = await supabase.auth.getUser();
-        if (error) throw error;
+        const currentUsername =
+          user.user_metadata?.username || githubUsername || "";
+
         setUser(user);
-        // You could also fetch the user's plan here
-        // setCurrentPlan(user.plan || 'FREE');
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      } finally {
-        setLoading(false);
+        setUsername(currentUsername);
+        setOriginalUsername(currentUsername);
       }
-    }
-
+    };
     getUser();
-  }, []);
+  }, [supabase.auth]);
 
+  // Simplified scroll to section handler
+  const handleNavClick = (e, sectionId) => {
+    e.preventDefault();
+
+    // Update active state immediately
+    setActiveSection(sectionId);
+
+    // Scroll to section
+    const element = document.getElementById(sectionId);
+    const offset = 120;
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  };
+
+  // Scroll spy effect
   useEffect(() => {
-    if (
-      user?.user_metadata?.user_name ||
-      user?.user_metadata?.preferred_username
-    ) {
-      setUsername(
-        user.user_metadata.preferred_username || user.user_metadata.user_name
-      );
-    }
-  }, [user]);
+    const handleScroll = () => {
+      const sections = document.querySelectorAll("section[id]");
+      const scrollPosition = window.scrollY + 200;
 
-  const toggleDarkMode = () => {
-    if (isDarkMode) {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("darkMode", "false");
-    } else {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("darkMode", "true");
-    }
-    setIsDarkMode(!isDarkMode);
-  };
+      sections.forEach((section) => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
 
-  const resetOptions = [
-    {
-      id: "learning",
-      title: "Reset Continued Learning",
-      description:
-        "Clear all progress on decks you haven't completed. This will reset your progress to 0% on all in-progress decks.",
-      warning:
-        "This will remove all progress from decks you haven't mastered yet.",
-    },
-    {
-      id: "mastered",
-      title: "Reset Mastered Decks",
-      description:
-        "Remove mastered status from all completed decks. These decks will return to your continued learning section.",
-      warning: "This will remove completion status from all mastered decks.",
-    },
-    {
-      id: "streak",
-      title: "Reset Streak",
-      description:
-        "Reset your current study streak to zero. This includes your best streak record.",
-      warning: "This will erase your current and best streak records.",
-    },
-    {
-      id: "points",
-      title: "Reset Total Points",
-      description:
-        "Set your total points back to zero. This will affect your ranking on the leaderboard.",
-      warning: "This will remove all points you've earned.",
-    },
-  ];
+        if (
+          scrollPosition >= sectionTop &&
+          scrollPosition < sectionTop + sectionHeight
+        ) {
+          setActiveSection(section.id);
+        }
+      });
+    };
 
-  const handleReset = async (type) => {
-    // Add your reset logic here based on type
-    switch (type) {
-      case "learning":
-        // Reset continued learning decks
-        break;
-      case "mastered":
-        // Reset mastered decks
-        break;
-      case "streak":
-        // Reset streak
-        break;
-      case "points":
-        // Reset points
-        break;
-      case "master":
-        // Reset everything
-        break;
-    }
-    setShowModal(false);
-    setShowMasterConfirm(false);
-  };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Check initial position
 
-  const handleDeleteAccount = async () => {
-    // Add your delete account logic here
-    // This is a placeholder and should be replaced with actual delete account functionality
-    console.log("Account deleted");
-    setShowDeleteConfirm(false);
-  };
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleUsernameUpdate = async () => {
     try {
-      setIsSaving(true);
-      const { data, error } = await supabase.auth.updateUser({
-        data: { preferred_username: username },
+      const { error } = await supabase.auth.updateUser({
+        data: { username: username },
       });
-
       if (error) throw error;
+      setOriginalUsername(username);
       setIsEditingUsername(false);
     } catch (error) {
       console.error("Error updating username:", error);
-    } finally {
-      setIsSaving(false);
+      setUsername(originalUsername); // Reset to original on error
     }
   };
 
-  if (loading) {
-    return (
-      <div className="max-w-3xl mx-auto px-4 py-12">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
-          <div className="h-4 w-full bg-zinc-200 dark:bg-zinc-800 rounded"></div>
-        </div>
-      </div>
-    );
-  }
+  const cancelUsernameEdit = () => {
+    setUsername(originalUsername);
+    setIsEditingUsername(false);
+  };
+
+  const handleReset = (type) => {
+    const configs = {
+      streak: {
+        title: "Reset Streak",
+        message:
+          "Are you sure you want to reset your streak? This action cannot be undone.",
+      },
+      points: {
+        title: "Reset Total Points",
+        message:
+          "Are you sure you want to reset your total points? This action cannot be undone.",
+      },
+      accuracy: {
+        title: "Reset Accuracy",
+        message:
+          "Are you sure you want to reset your accuracy statistics? This action cannot be undone.",
+      },
+      unfinished: {
+        title: "Reset Unfinished Decks",
+        message:
+          "Are you sure you want to reset all progress on unfinished decks? This action cannot be undone.",
+      },
+      mastered: {
+        title: "Reset Mastered Decks",
+        message:
+          "Are you sure you want to remove all decks from your mastered list? This action cannot be undone.",
+      },
+    };
+
+    setModalConfig({
+      isOpen: true,
+      ...configs[type],
+      onConfirm: () => {
+        // Handle the reset action here
+        console.log(`Resetting ${type}`);
+        setModalConfig((prev) => ({ ...prev, isOpen: false }));
+      },
+      type: "normal",
+    });
+  };
+
+  const handleResetAll = () => {
+    setModalConfig({
+      isOpen: true,
+      title: "Reset Everything",
+      message:
+        "This will reset ALL your progress. This action cannot be undone.",
+      onConfirm: () => {
+        // Handle the reset all action here
+        console.log("Resetting everything");
+        setModalConfig((prev) => ({ ...prev, isOpen: false }));
+      },
+      type: "dangerous",
+      confirmText: "RESET",
+    });
+  };
+
+  const handleDeleteAccount = () => {
+    setModalConfig({
+      isOpen: true,
+      title: "Delete Account",
+      message:
+        "This will permanently delete your account and all associated data. This action cannot be undone.",
+      onConfirm: () => {
+        // Handle the account deletion here
+        console.log("Deleting account");
+        setModalConfig((prev) => ({ ...prev, isOpen: false }));
+      },
+      type: "dangerous",
+      confirmText: "DELETE",
+    });
+  };
 
   if (!mounted) return null;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 pt-28 pb-20">
-      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-8">
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <h1 className="text-xl font-semibold text-zinc-900 dark:text-white mb-8">
         Settings
       </h1>
 
-      <div className="space-y-16">
-        {/* Appearance Section */}
-        <section className="space-y-6">
-          <div className="border-b border-zinc-200 dark:border-zinc-800 pb-2">
-            <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+      <div className="space-y-12">
+        <section
+          id="appearance"
+          className="space-y-6 bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6"
+        >
+          <div>
+            <h2 className="text-lg font-medium text-zinc-900 dark:text-white">
               Appearance
             </h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-              Customize how DevDecks looks on your device
+            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+              Customize how Flashcard AI looks on your device
             </p>
           </div>
 
-          <div className="pl-1">
-            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-700/50 bg-white/50 dark:bg-zinc-800/50 hover:bg-white dark:hover:bg-zinc-800 transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                    Dark Mode
-                  </h3>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    Toggle between light and dark themes
-                  </p>
+          <div className="space-y-4">
+            <div className="bg-white/50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200/50 dark:border-zinc-700/50">
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800">
+                      {theme === "dark" ? (
+                        <FiMoon className="h-5 w-5 text-zinc-500" />
+                      ) : (
+                        <FiSun className="h-5 w-5 text-zinc-500" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-zinc-900 dark:text-white">
+                        Dark Mode
+                      </div>
+                      <div className="text-xs text-zinc-500">
+                        {theme === "dark"
+                          ? "Currently dark theme"
+                          : "Currently light theme"}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() =>
+                        setTheme(theme === "dark" ? "light" : "dark")
+                      }
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none ${
+                        theme === "dark"
+                          ? "bg-cyan-500"
+                          : "bg-zinc-200 dark:bg-zinc-700"
+                      }`}
+                    >
+                      <span
+                        className={`${
+                          theme === "dark" ? "translate-x-6" : "translate-x-1"
+                        } inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200`}
+                      />
+                    </button>
+                  </div>
                 </div>
-                <ThemeToggle />
               </div>
             </div>
           </div>
         </section>
 
-        {/* Account Section */}
-        <section className="space-y-6">
-          <div className="border-b border-zinc-200 dark:border-zinc-800 pb-2">
-            <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+        <section
+          id="account"
+          className="space-y-6 bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6"
+        >
+          <div>
+            <h2 className="text-lg font-medium text-zinc-900 dark:text-white">
               Account
             </h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-              Manage your account settings and subscription
+            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+              Manage your account information
             </p>
           </div>
 
-          <div className="pl-1 space-y-6">
-            {/* Account Info */}
-            <div className="rounded-xl border border-zinc-200 dark:border-zinc-700/50 bg-white/50 dark:bg-zinc-800/50 p-4">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                      Account Details
-                    </h3>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                      {user?.email}
-                    </p>
+          <div className="space-y-4">
+            <div className="bg-white/50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200/50 dark:border-zinc-700/50">
+              <div className="divide-y divide-zinc-200/50 dark:divide-zinc-700/50">
+                {/* Name */}
+                <div className="p-4">
+                  <div className="flex justify-between">
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        Name
+                      </label>
+                      <div className="mt-1 text-sm text-zinc-900 dark:text-white">
+                        {user?.user_metadata?.full_name || "Not set"}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-zinc-200 dark:border-zinc-700/50">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <label
-                        htmlFor="username"
-                        className="text-sm text-zinc-500 dark:text-zinc-400"
-                      >
+                {/* Username */}
+                <div className="p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-500 dark:text-zinc-400">
                         Username
                       </label>
                       {isEditingUsername ? (
-                        <div className="flex items-center gap-2">
+                        <div className="mt-1 flex items-center gap-2">
                           <input
                             type="text"
-                            id="username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="px-2 py-1 text-sm bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:focus:ring-cyan-400 focus:border-transparent"
-                            placeholder="Enter username"
+                            className="px-2 py-1 text-sm rounded-md border border-zinc-200/50 dark:border-zinc-700/50 bg-white/50 dark:bg-zinc-800/50 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
                           />
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => setIsEditingUsername(false)}
-                              className="text-sm text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              onClick={handleUsernameUpdate}
-                              disabled={isSaving}
-                              className="px-3 py-1 text-sm font-medium text-white bg-cyan-500 hover:bg-cyan-600 dark:bg-cyan-600 dark:hover:bg-cyan-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              {isSaving ? "Saving..." : "Save"}
-                            </button>
-                          </div>
+                          <button
+                            onClick={handleUsernameUpdate}
+                            className="p-1 text-cyan-500 hover:text-cyan-600"
+                          >
+                            <FiCheck className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={cancelUsernameEdit}
+                            className="p-1 text-zinc-500 hover:text-zinc-600"
+                          >
+                            <FiX className="h-4 w-4" />
+                          </button>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-4">
-                          <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                            {username || "No username set"}
-                          </p>
+                        <div className="mt-1 flex items-center gap-2">
+                          <span className="text-sm text-zinc-900 dark:text-white">
+                            {username || "Not set"}
+                          </span>
                           <button
                             onClick={() => setIsEditingUsername(true)}
-                            className="text-sm text-cyan-500 hover:text-cyan-600 dark:text-cyan-400 dark:hover:text-cyan-300"
+                            className="p-1 text-zinc-500 hover:text-zinc-600"
                           >
-                            Edit
+                            <FiEdit2 className="h-4 w-4" />
                           </button>
                         </div>
                       )}
@@ -316,430 +514,278 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-zinc-200 dark:border-zinc-700/50">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                        GitHub Account
-                      </p>
-                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                        {user?.user_metadata?.user_name || "Not connected"}
-                      </p>
-                    </div>
-                    <div className="text-sm text-zinc-500 dark:text-zinc-400">
-                      Connected
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Subscription Plan */}
-            <div className="rounded-xl border border-zinc-200 dark:border-zinc-700/50 bg-white/50 dark:bg-zinc-800/50 p-4">
-              <div className="space-y-6">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                      Subscription Plan
-                    </h3>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                      You are currently on the {PLANS[currentPlan].name} plan
-                    </p>
-                  </div>
-                  {currentPlan === "PRO" && (
-                    <span className="px-2.5 py-0.5 text-xs font-medium bg-cyan-100 text-cyan-600 dark:bg-cyan-500/10 dark:text-cyan-400 rounded-full">
-                      PRO
-                    </span>
-                  )}
-                </div>
-
-                {/* Plan Details */}
-                <div className="flex gap-4">
-                  {/* Free Plan */}
-                  <div
-                    className={`flex-1 rounded-lg border ${
-                      currentPlan === "FREE"
-                        ? "border-cyan-500 dark:border-cyan-500/30"
-                        : "border-zinc-200 dark:border-zinc-700/50"
-                    } p-4`}
-                  >
-                    <div className="space-y-3">
-                      <div>
-                        <h4 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                          Free Plan
-                        </h4>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                          Basic features for getting started
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        {PLANS.FREE.features.map((feature, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"
-                          >
-                            <FiCheck className="h-4 w-4 text-cyan-500" />
-                            {feature}
-                          </div>
-                        ))}
+                {/* Email */}
+                <div className="p-4">
+                  <div className="flex justify-between">
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        Email
+                      </label>
+                      <div className="mt-1 text-sm text-zinc-900 dark:text-white">
+                        {user?.email || "Not set"}
                       </div>
                     </div>
                   </div>
-
-                  {/* Pro Plan */}
-                  <div
-                    className={`flex-1 rounded-lg border ${
-                      currentPlan === "PRO"
-                        ? "border-cyan-500 dark:border-cyan-500/30"
-                        : "border-zinc-200 dark:border-zinc-700/50"
-                    } p-4`}
-                  >
-                    <div className="space-y-3">
-                      <div>
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                            Pro Plan
-                          </h4>
-                          <p className="text-sm font-medium text-cyan-600 dark:text-cyan-400">
-                            {PLANS.PRO.price}
-                          </p>
-                        </div>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                          Advanced features for power users
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        {PLANS.PRO.features.map((feature, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"
-                          >
-                            <FiCheck
-                              className={`h-4 w-4 ${
-                                PLANS.FREE.features.includes(feature)
-                                  ? "text-cyan-500"
-                                  : "text-cyan-500"
-                              }`}
-                            />
-                            {feature}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex justify-end pt-2">
-                  {currentPlan === "FREE" ? (
-                    <button className="px-4 py-2 text-sm font-medium text-white bg-cyan-500 hover:bg-cyan-600 dark:bg-cyan-600 dark:hover:bg-cyan-700 rounded-lg transition-colors">
-                      Upgrade to Pro
-                    </button>
-                  ) : (
-                    <div className="space-x-3">
-                      <button className="px-4 py-2 text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors">
-                        Cancel Subscription
-                      </button>
-                      <button className="px-4 py-2 text-sm font-medium text-white bg-cyan-500 hover:bg-cyan-600 dark:bg-cyan-600 dark:hover:bg-cyan-700 rounded-lg transition-colors">
-                        Manage Billing
-                      </button>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Danger Zone Section */}
-        <section className="space-y-6">
-          <div className="border-b border-red-200 dark:border-red-800/50 pb-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-medium text-red-600 dark:text-red-500">
-                  Danger Zone
-                </h2>
-                <p className="text-sm text-red-500 dark:text-red-400 mt-1">
-                  Irreversible actions that affect your account and data
-                </p>
+        <section id="subscription" className="space-y-6">
+          <div>
+            <h2 className="text-lg font-medium text-zinc-900 dark:text-white">
+              Subscription
+            </h2>
+            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+              Manage your subscription and billing
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Free Tier */}
+            <div className="rounded-3xl border border-zinc-200/50 dark:border-zinc-700/50 p-8 bg-white/50 dark:bg-zinc-800/50 flex flex-col">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-xl font-semibold text-zinc-900 dark:text-white mb-1">
+                    Free
+                  </h2>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    Get started with the basics
+                  </p>
+                </div>
+                <span className="text-2xl font-semibold text-zinc-900 dark:text-white">
+                  $0
+                </span>
               </div>
-              <FiAlertTriangle className="h-5 w-5 text-red-500 dark:text-red-400" />
+
+              <div className="space-y-4 flex-1">
+                {[
+                  "Up to 5 flashcard decks",
+                  "Basic statistics",
+                  "Community sharing",
+                  "Standard spaced repetition",
+                ].map((feature) => (
+                  <div key={feature} className="flex items-center gap-3">
+                    <FiCheck className="h-5 w-5 text-cyan-500" />
+                    <span className="text-zinc-600 dark:text-zinc-300">
+                      {feature}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                disabled
+                className="w-full mt-8 flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-zinc-600 dark:text-zinc-400  transition-colors font-medium"
+              >
+                Current Plan
+              </button>
+            </div>
+
+            {/* Pro Tier */}
+            <div className="rounded-3xl border border-cyan-500/20 p-8 bg-white/50 dark:bg-zinc-800/50 relative flex flex-col">
+              <div className="absolute -top-3 left-4">
+                <div className="px-3 py-1 rounded-full bg-white dark:bg-zinc-900 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-sm font-medium flex items-center gap-1 shadow-sm">
+                  <FiStar className="h-4 w-4" />
+                  Recommended
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-xl font-semibold text-zinc-900 dark:text-white mb-1">
+                    Pro
+                  </h2>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    For serious learners
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className="text-2xl font-semibold text-zinc-900 dark:text-cyan-500">
+                    $9
+                  </span>
+                  <span className="text-zinc-500 dark:text-zinc-400 text-sm">
+                    /month
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-4 flex-1">
+                {[
+                  "Everything in Free, plus:",
+                  "Unlimited flashcard decks",
+                  "Advanced analytics & insights",
+                  "AI-powered learning suggestions",
+                  "Custom study schedules",
+                  "Priority support",
+                  "Offline access",
+                  "Export & backup options",
+                ].map((feature) => (
+                  <div key={feature} className="flex items-center gap-3">
+                    <FiCheck className="h-5 w-5 text-cyan-500" />
+                    <span className="text-zinc-600 dark:text-zinc-300">
+                      {feature}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <Link
+                href="/upgrade"
+                className="w-full mt-8 flex items-center justify-center gap-2 bg-cyan-500 text-white dark:text-white px-6 py-3 rounded-xl  hover:bg-cyan-600 transition-colors font-medium"
+              >
+                <FiZap className="h-5 w-5" />
+                Upgrade to Pro
+              </Link>
             </div>
           </div>
 
-          <div className="pl-1 space-y-6">
-            {/* Reset Options Group */}
-            <div className="rounded-xl border border-zinc-200 dark:border-zinc-700/50 bg-white/50 dark:bg-zinc-800/50 divide-y divide-zinc-200 dark:divide-zinc-700/50">
-              {resetOptions.map((option, index) => (
+          <div className="flex items-center gap-2 px-4 py-3 bg-white/50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200/50 dark:border-zinc-700/50">
+            <div className="h-1.5 w-1.5 rounded-full bg-cyan-500" />
+            <span className="text-sm text-zinc-500">
+              View detailed plan comparison and FAQ on the{" "}
+              <Link href="/upgrade" className="text-cyan-500 hover:underline">
+                upgrade page
+              </Link>
+            </span>
+          </div>
+        </section>
+
+        <section id="danger" className="space-y-6">
+          <div>
+            <h2 className="text-lg font-medium text-zinc-900 dark:text-white">
+              Danger Zone
+            </h2>
+            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+              Reset your progress and data
+            </p>
+          </div>
+
+          <div className="space-y-4 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6 bg-white dark:bg-zinc-800/50">
+            <div className="space-y-6">
+              {[
+                {
+                  id: "streak",
+                  label: "Reset Streak",
+                  description: "This will reset your current streak to 0",
+                },
+                {
+                  id: "points",
+                  label: "Reset Total Points",
+                  description: "This will reset your total points to 0",
+                },
+                {
+                  id: "accuracy",
+                  label: "Reset Accuracy",
+                  description: "This will reset your accuracy statistics",
+                },
+                {
+                  id: "unfinished",
+                  label: "Reset Unfinished Decks",
+                  description:
+                    "This will reset progress on all unfinished decks",
+                },
+                {
+                  id: "mastered",
+                  label: "Reset Mastered Decks",
+                  description:
+                    "This will remove all decks from your mastered list",
+                },
+              ].map((item) => (
                 <div
-                  key={option.id}
-                  className={`p-4 ${index === 0 ? "rounded-t-xl" : ""} ${
-                    index === resetOptions.length - 1 ? "rounded-b-xl" : ""
-                  }`}
+                  key={item.id}
+                  className="flex items-center justify-between py-3"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                        {option.title}
-                      </h3>
-                      <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                        {option.description}
-                      </p>
+                  <div>
+                    <div className="font-medium text-zinc-900 dark:text-white">
+                      {item.label}
                     </div>
-                    <button
-                      onClick={() => {
-                        setResetType(option);
-                        setShowModal(true);
-                      }}
-                      className="ml-8 px-3 py-2 text-sm text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 transition-colors"
-                    >
-                      Reset
-                    </button>
+                    <div className="text-sm text-zinc-600 dark:text-zinc-400">
+                      {item.description}
+                    </div>
                   </div>
+                  <button
+                    onClick={() => handleReset(item.id)}
+                    className="px-4 py-2 text-sm font-medium rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors border border-zinc-200 dark:border-zinc-700"
+                  >
+                    Reset
+                  </button>
                 </div>
               ))}
             </div>
 
-            {/* Account Deletion */}
-            <div className="p-4 rounded-xl border border-red-200 dark:border-red-800/50 bg-red-50/50 dark:bg-red-900/20 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <h3 className="text-sm font-medium text-red-900 dark:text-red-400">
-                    Delete Account
-                  </h3>
-                  <p className="text-sm text-red-600 dark:text-red-500">
-                    Permanently delete your account and all associated data.
-                    This action cannot be undone.
-                  </p>
+            <div className="pt-6 space-y-6 border-t border-zinc-200 dark:border-zinc-700/50">
+              <div className="p-4 rounded-lg bg-red-50 dark:bg-red-500/5 border border-red-200 dark:border-red-500/20">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-zinc-900 dark:text-white">
+                      Reset Everything
+                    </div>
+                    <div className="text-sm text-zinc-500 dark:text-zinc-400">
+                      This will reset all your progress and data
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleResetAll()}
+                    className="px-4 py-2 text-sm font-medium rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors"
+                  >
+                    Reset All
+                  </button>
                 </div>
-                <button
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="ml-8 px-3 py-2 text-sm font-medium text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 transition-colors"
-                >
-                  Delete Account
-                </button>
               </div>
-            </div>
 
-            {/* Master Reset */}
-            <div className="p-4 rounded-xl border border-red-200 dark:border-red-800/50 bg-red-50/50 dark:bg-red-900/20 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <h3 className="text-sm font-medium text-red-900 dark:text-red-400">
-                    Master Reset
-                  </h3>
-                  <p className="text-sm text-red-600 dark:text-red-500">
-                    Reset everything to default. This will erase all your
-                    progress, stats, and achievements.
-                  </p>
+              <div className="p-4 rounded-lg bg-red-50 dark:bg-red-500/5 border border-red-200 dark:border-red-500/20">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-zinc-900 dark:text-white">
+                      Delete Account
+                    </div>
+                    <div className="text-sm text-zinc-500 dark:text-zinc-400">
+                      Permanently delete your account and all associated data
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteAccount()}
+                    className="px-4 py-2 text-sm font-medium rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors"
+                  >
+                    Delete Account
+                  </button>
                 </div>
-                <button
-                  onClick={() => setShowMasterConfirm(true)}
-                  className="ml-8 px-3 py-2 text-sm font-medium text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 transition-colors"
-                >
-                  Reset All
-                </button>
               </div>
             </div>
           </div>
         </section>
       </div>
 
-      {/* Regular Reset Confirmation Modal */}
-      {showModal && (
-        <div
-          className="fixed inset-0 flex items-center justify-center p-4 z-50"
-          onClick={() => setShowModal(false)}
-        >
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-in-out"
-            style={{
-              opacity: showModal ? 1 : 0,
-            }}
-          />
+      <ConfirmationModal
+        isOpen={modalConfig.isOpen && modalConfig.type === "normal"}
+        onClose={() => setModalConfig((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={modalConfig.onConfirm}
+        title={modalConfig.title}
+        message={modalConfig.message}
+      />
 
-          {/* Modal Content */}
-          <div
-            className="relative bg-white dark:bg-zinc-900 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl transform transition-all duration-300 ease-out"
-            style={{
-              opacity: showModal ? 1 : 0,
-              transform: showModal
-                ? "scale(1) translateY(0)"
-                : "scale(0.95) translateY(-10px)",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
-                Confirm Reset
-              </h3>
-              <button
-                onClick={() => setShowModal(false)}
-                className="p-2 text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300"
-              >
-                <FiX className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-500">
-              <FiAlertTriangle className="h-5 w-5 mt-0.5 flex-shrink-0" />
-              <p className="text-sm">{resetType?.warning}</p>
-            </div>
-            <div className="flex items-center justify-end gap-3">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleReset(resetType?.id)}
-                className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-              >
-                Reset
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Master Reset Confirmation Modal */}
-      {showMasterConfirm && (
-        <div
-          className="fixed inset-0 flex items-center justify-center p-4 z-50"
-          onClick={() => setShowMasterConfirm(false)}
-        >
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-in-out"
-            style={{
-              opacity: showMasterConfirm ? 1 : 0,
-            }}
-          />
-
-          {/* Modal Content */}
-          <div
-            className="relative bg-white dark:bg-zinc-900 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl transform transition-all duration-300 ease-out"
-            style={{
-              opacity: showMasterConfirm ? 1 : 0,
-              transform: showMasterConfirm
-                ? "scale(1) translateY(0)"
-                : "scale(0.95) translateY(-10px)",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
-                Master Reset
-              </h3>
-              <button
-                onClick={() => setShowMasterConfirm(false)}
-                className="p-2 text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300"
-              >
-                <FiX className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-500">
-                <FiAlertTriangle className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">
-                    This action cannot be undone
-                  </p>
-                  <p className="text-sm">
-                    This will permanently erase all your progress
-                  </p>
-                  <ul className="text-sm list-disc ml-4 space-y-1">
-                    <li>Learning progress</li>
-                    <li>Mastered decks</li>
-                    <li>Study streak</li>
-                    <li>Total points</li>
-                    <li>Achievement records</li>
-                  </ul>
-                </div>
-              </div>
-              <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-500">
-                <p className="text-sm">
-                  Type <strong>RESET ALL</strong> to confirm
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center justify-end gap-3">
-              <button
-                onClick={() => setShowMasterConfirm(false)}
-                className="px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleReset("master")}
-                className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-              >
-                Reset Everything
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showDeleteConfirm && (
-        <div
-          className="fixed inset-0 flex items-center justify-center p-4 z-50"
-          onClick={() => setShowDeleteConfirm(false)}
-        >
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-in-out"
-            style={{
-              opacity: showDeleteConfirm ? 1 : 0,
-            }}
-          />
-
-          <div
-            className="relative bg-white dark:bg-zinc-900 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl transform transition-all duration-300 ease-out"
-            style={{
-              opacity: showDeleteConfirm ? 1 : 0,
-              transform: showDeleteConfirm
-                ? "scale(1) translateY(0)"
-                : "scale(0.95) translateY(-10px)",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
-                Delete Account
-              </h3>
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="p-2 text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300"
-              >
-                <FiX className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-500">
-              <FiAlertTriangle className="h-5 w-5 mt-0.5 flex-shrink-0" />
-              <p className="text-sm">
-                This will permanently delete your account and all associated
-                data. This action cannot be undone.
-              </p>
-            </div>
-            <div className="flex items-center justify-end gap-3">
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleDeleteAccount()}
-                className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-              >
-                Delete Account
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DangerousConfirmationModal
+        isOpen={modalConfig.isOpen && modalConfig.type === "dangerous"}
+        onClose={() => setModalConfig((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={modalConfig.onConfirm}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmText={modalConfig.confirmText}
+      />
     </div>
   );
+}
+
+// Throttle function
+function throttle(func, limit) {
+  let inThrottle;
+  return function (...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+  };
 }
