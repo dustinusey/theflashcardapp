@@ -14,7 +14,7 @@ import {
 } from "react-icons/fi";
 
 // development toggle for dummy data
-const SHOW_DUMMY_DATA = false;
+const SHOW_DUMMY_DATA = true;
 
 // FAQ Component
 function FAQ({ question, answer }) {
@@ -108,7 +108,7 @@ export default function HighscoresPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-12  pt-28 min-h-screen">
       {/* Header */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-12 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both delay-300">
         <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-3">
           Leaderboard
         </h1>
@@ -126,10 +126,10 @@ export default function HighscoresPage() {
           <p className="text-zinc-500 dark:text-zinc-400">No users found</p>
         </div>
       ) : (
-        <>
+        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both delay-300">
           {/* Show top 3 only on first page */}
           {isFirstPage && (
-            <div className="grid md:grid-cols-3 gap-4 mb-12">
+            <div className="grid md:grid-cols-3 gap-4 mb-12 ">
               {currentUsers.slice(0, 3).map((user, index) => (
                 <div
                   key={user.id}
@@ -256,7 +256,7 @@ export default function HighscoresPage() {
           )}
 
           {/* Remaining Users List */}
-          <div className="space-y-2 mb-8">
+          <div className="mb-8 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both delay-300">
             {currentUsers.slice(isFirstPage ? 3 : 0).map((user, index) => (
               <Link
                 href={`/profile/${user.id}`}
@@ -384,8 +384,8 @@ export default function HighscoresPage() {
           )}
 
           {/* FAQ Section */}
-          <div className="mt-20">
-            <div className="text-center mb-10">
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both delay-300">
+            <div className="text-center my-20">
               <div className="flex items-center justify-center gap-2 mb-4">
                 <FiHelpCircle className="h-5 w-5 text-cyan-500" />
                 <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white">
@@ -428,12 +428,11 @@ export default function HighscoresPage() {
               ))}
             </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
 }
-
 // Dummy data array
 const dummyUsers = [
   {

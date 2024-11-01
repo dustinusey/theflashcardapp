@@ -39,13 +39,13 @@ function ConfirmationModal({ isOpen, onClose, onConfirm, title, message }) {
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-black/60 dark:bg-white/20 backdrop-blur-[2px]"
         onClick={handleClose}
       />
 
       {/* Modal */}
       <div
-        className={`relative w-full max-w-lg bg-white dark:bg-zinc-950 rounded-2xl shadow-2xl border border-zinc-300 dark:border-zinc-800 transition-all duration-150
+        className={`relative w-full max-w-lg bg-white dark:bg-zinc-800 rounded-2xl shadow-2xl border border-zinc-300 dark:border-zinc-800 transition-all duration-150
           ${isAnimatingOut ? "opacity-0 scale-95" : "opacity-100 scale-100"}`}
       >
         <div className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800/50">
@@ -373,7 +373,7 @@ export default function SettingsPage() {
   if (!mounted) return null;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 pb-20 pt-24">
       <h1 className="text-xl font-semibold text-zinc-900 dark:text-white mb-8">
         Settings
       </h1>
@@ -388,7 +388,8 @@ export default function SettingsPage() {
               Appearance
             </h2>
             <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-              Customize how Flashcard AI looks on your device
+              Switch between light and dark themes to reduce eye strain and
+              study comfortably day or night
             </p>
           </div>
 

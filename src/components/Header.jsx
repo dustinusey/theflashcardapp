@@ -151,14 +151,6 @@ export default function Header() {
                     </div>
                     <div className="p-2">
                       <Link
-                        href="/profile"
-                        onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
-                      >
-                        <FiUser className="h-4 w-4" />
-                        Profile
-                      </Link>
-                      <Link
                         href="/settings"
                         onClick={() => setIsDropdownOpen(false)}
                         className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"

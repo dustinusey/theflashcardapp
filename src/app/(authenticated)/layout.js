@@ -6,9 +6,8 @@ import { useEffect, useState } from "react";
 import {
   FiAward,
   FiHome,
-  FiPlus,
+  FiPlusSquare,
   FiSettings,
-  FiUser,
   FiZap,
 } from "react-icons/fi";
 
@@ -65,7 +64,7 @@ export default function AuthenticatedLayout({ children }) {
                 }`}
                 title="Create Flashcard Set"
               >
-                <FiPlus className="h-5 w-5" />
+                <FiPlusSquare className="h-5 w-5" />
               </Link>
             </div>
 
@@ -113,19 +112,6 @@ export default function AuthenticatedLayout({ children }) {
               title="Settings"
             >
               <FiSettings className="h-5 w-5" />
-            </Link>
-
-            {/* Profile */}
-            <Link
-              href="/profile"
-              className={`flex items-center justify-center p-2.5 rounded-2xl   w-full transition-colors ${
-                pathname === "/profile"
-                  ? "text-zinc-900 dark:text-zinc-100  dark:bg-cyan-800/30 hover:bg-zic-400 bg-zinc-200"
-                  : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-200 hover:bg-zic-400 hover:bg-zinc-200"
-              }`}
-              title="Profile"
-            >
-              <FiUser className="h-5 w-5" />
             </Link>
           </div>
         </div>

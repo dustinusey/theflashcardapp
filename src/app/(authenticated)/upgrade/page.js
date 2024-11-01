@@ -47,7 +47,7 @@ export default function UpgradePage() {
   return (
     <div className="max-w-screen-xl mx-auto px-4 py-12 pt-28 min-h-screen">
       {/* Hero Section */}
-      <div className="text-center max-w-2xl mx-auto mb-16">
+      <div className="text-center max-w-2xl mx-auto mb-16 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both delay-300">
         <span className="px-4 py-1.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-sm font-medium inline-block mb-4">
           Upgrade to Pro
         </span>
@@ -61,7 +61,7 @@ export default function UpgradePage() {
       </div>
 
       {/* Features Grid - Above Pricing */}
-      <div className="max-w-4xl mx-auto mb-16">
+      <div className="max-w-4xl mx-auto mb-16 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both delay-500">
         <div className="grid md:grid-cols-2 gap-6">
           {[
             {
@@ -112,7 +112,7 @@ export default function UpgradePage() {
       </div>
 
       {/* Pricing Grid */}
-      <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
+      <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both delay-700">
         {/* Free Tier */}
         <div className="rounded-3xl border border-zinc-200 dark:border-zinc-700/50 p-8 bg-white dark:bg-zinc-900">
           <div className="flex items-center justify-between mb-6">

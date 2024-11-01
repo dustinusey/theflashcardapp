@@ -173,15 +173,11 @@ export default function Dashboard() {
   if (!mounted) return null;
 
   return (
-    <div className="pt-12 bg-gradient-to-b from-zinc-100 to-white dark:from-zinc-800 dark:to-zinc-900 w-full pb-24">
-      <div className="max-w-3xl mx-auto px-4 py-12">
+    <div className="pt-12 bg-gradient-to-b from-zinc-100 to-white dark:from-zinc-800 dark:to-zinc-900 w-full pb-24 min-h-screen">
+      <div className="max-w-3xl mx-auto px-4 py-20 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both delay-300">
         <div className="space-y-8">
           {/* User Profile & Welcome */}
-          <div
-            className={`transition-fade ${
-              isVisible ? "show [transition-delay:200ms]" : ""
-            }`}
-          >
+          <div>
             <div className="flex items-center gap-6">
               <div className="w-24 h-24 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden flex-shrink-0">
                 {user?.user_metadata?.avatar_url ? (
@@ -303,13 +299,9 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 space-y-8 mb-24">
+      <div className="max-w-3xl mx-auto px-4 mb-24 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both delay-500">
         {/* Incomplete Decks */}
-        <div
-          className={`transition-fade ${
-            isVisible ? "show [transition-delay:800ms]" : ""
-          }`}
-        >
+        <div>
           <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-4">
             Continue Learning
           </h2>
